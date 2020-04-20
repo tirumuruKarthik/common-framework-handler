@@ -1,0 +1,21 @@
+{
+  "error": {
+    "errorCode": "NOT_FOUND",
+    "errorType": {
+      "identifier": "NOT_FOUND",
+      "parentErrorType": {
+        "identifier": "ANY",
+        "parentErrorType": {
+          "identifier": "ANY",
+          "parentErrorType": null,
+          "namespace": "MULE"
+        },
+        "namespace": "APIKIT"
+      },
+      "namespace": "APIKIT"
+    },
+    "errorDateTime": "2019-08-21T12:14:02",
+    "errorMessage": "Undefined error message. Please, improve your error handling!",
+    "errorDescription": "/orderaas/122"
+  }
+}

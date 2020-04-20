@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orders xmlns="http://www.demandware.com/xml/impex/order/2006-10-31">
+    <order order-no="test1000001111">
+        <order-date>2019-07-18T12:56:06.000Z</order-date>
+        <created-by>storefront</created-by>
+        <original-order-no>test1000001111</original-order-no>
+        <currency>GBP</currency>
+        <customer-locale>en_GB</customer-locale>
+        <taxation>gross</taxation>
+        <invoice-no>00007003</invoice-no>
+    </order>
+    <order order-no="test1000001112">
+        <order-date>2019-07-18T12:56:06.000Z</order-date>
+        <created-by>storefront</created-by>
+        <original-order-no>test1000001112</original-order-no>
+        <currency>GBP</currency>
+        <customer-locale>en_GB</customer-locale>
+        <taxation>gross</taxation>
+        <invoice-no>00007004</invoice-no>
+    </order>
+	<order order-no="test1000001113">
+        <order-date>2019-07-18T12:56:06.000Z</order-date>
+        <created-by>storefront</created-by>
+        <original-order-no>test1000001113</original-order-no>
+        <currency>GBP</currency>
+        <customer-locale>en_GB</customer-locale>
+        <taxation>gross</taxation>
+        <invoice-no>00007005</invoice-no>
+    </order>
+</orders>

@@ -1,0 +1,75 @@
+is: 
+  audit:
+    toggle: "ON"
+    payload: "ON"
+    details:
+      toggle: "ON"
+  logging:
+    toggle: "OFF"
+
+flow:
+  name:
+    undefined: "Flow Name not Defined"
+    
+retry:
+  frequency: "2000"
+  attempts: "3"   
+shipment:
+  labelImageFormat: "PNG"  
+
+db:
+  pool:
+    size:
+      max: "35"
+      min: "13"
+      
+error:
+  msg:
+    '404': "Resource not found"
+    '405': "Method not allowed"
+    '415': "Unsupported media type"
+    '406': "Not acceptable"
+    '400': "Bad request"  
+    '401': "HTTP Client Security"
+    '403': "Authorization Error"
+    '500': "Internal Server Error"
+    '503': "Retry Exhausted"
+    '504': "HTTP Timeout"
+    '429': "Too Many Requests"
+    '412': "Precondition Failed"
+    http:
+      parsing: "Parsing Error"
+    generic:  
+      stream: "Stream Maximum Size Exceeded"
+      redelivery: "Redelivery Exhausted"
+      connectivity: "Connectivity Error"
+      timeout: "Timeout Error"
+      security: "Security Error"
+    db:
+      syntax: "Bad SQL syntax"
+      connection: "DB Connectivity Error"
+      Query: "Query Execution Error"
+      Retry: "DB Retry Exhausted"
+    transform: "Transformation Error"
+    expression: "Expression error"
+    routing: "Routing Error"
+    script: 
+      compile: "Script compilation error" 
+      execute: "Script execution error"
+      unknown: "Script unknown engine error"
+    sftp:
+      access: "SFTP Access Denied"
+      connection: "SFTP Connectivity error"
+      path: "SFTP Illegal Path"
+      retry: "SFTP Retry Exhausted"  
+    compress:
+      notCompress: "Not able to compress"
+      invalidFormat: "The given content does not match the format of the configured strategy"
+      multipleEntry: "The archive to be decompressed has more than one entry"
+      notDecompress: "Not able to decompress"
+    reprocessing:
+      level2retry: "Level 2 Retry Mechanism Processing"
+    cloudhub:
+      alert: "Sending alert to Help Desk"       
+      
+      

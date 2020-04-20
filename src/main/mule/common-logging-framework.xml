@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:common-logging-extension="http://www.mulesoft.org/schema/mule/common-logging-extension" xmlns:commonloggerextension="http://www.mulesoft.org/schema/mule/commonloggerextension"
+	xmlns:common-logger-extension="http://www.mulesoft.org/schema/mule/common-logger-extension"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/common-logging-extension http://www.mulesoft.org/schema/mule/common-logging-extension/current/mule-common-logging-extension.xsd">
+	
+	<sub-flow name="log-receiver-entry-sub-flow" doc:id="0dbf8b32-8bc6-4087-8fcf-5f5da7773b7e" >
+		<ee:transform doc:name="Logging Parameter" doc:id="ea453115-2ee0-46c5-8df1-5528c17650a2" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="transactionId" ><![CDATA[%dw 2.0
+output application/java
+---
+if (attributes.headers.'transaction-id' != null) attributes.headers.'transaction-id' else if (vars.transactionId != null) vars.transactionId else uuid()]]></ee:set-variable>
+				<ee:set-variable variableName="transactionStartTime" ><![CDATA[%dw 2.0
+output application/java
+---
+if (attributes.headers.'transaction-start-time' != null) (attributes.headers.'transaction-start-time' as DateTime as String {format:"yyyy-MM-dd'T'hh:MM:ss.SSS'Z'"}) else if (vars.transactionStartTime != null) (vars.transactionStartTime as DateTime as String {format:"yyyy-MM-dd'T'hh:MM:ss.SSS'Z'"}) else (now() as DateTime as String {format:"yyyy-MM-dd'T'hh:MM:ss.SSS'Z'"})]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<set-variable value="#[if(vars.correlationId != null) vars.correlationId else correlationId]" doc:name="Set Message Correlation Id" doc:id="4b33abbd-2392-4bb8-9346-47ebc1315d08" variableName="messageCorrelationId"/>
+		<ee:transform doc:name="Additional Info" doc:id="7f09d129-8d5b-40e9-a6db-8e1984b24cdb" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="additionalInfo" ><![CDATA[%dw 2.0
+output application/java
+---
+'Transaction Start Time: ' ++  vars.transactionStartTime ++ (if(attributes.method != null) ('; HTTP Method: ' ++ attributes.method ) else '') ++ (if(attributes.requestUri != null) (
+'; Resource Path: ' ++ attributes.requestUri) else '') ++ (if(attributes.headers.'x-http-method-override' != null) '; HTTP-Method-Override: ' ++ 
+attributes.headers.'x-http-method-override' else  '') ++ (if(vars.primaryKey != null) ('; Primary Key: ' ++ vars.primaryKey) else '') 
+++ (if(vars.secondaryKey != null) ('; Secondary Key: ' ++ vars.secondaryKey) else '')]]></ee:set-variable>
+				<ee:set-variable variableName="finalMessageId" ><![CDATA[%dw 2.0
+output application/java
+---
+if (vars.messageId != null) vars.messageId else vars.messageCorrelationId ]]></ee:set-variable>
+				<ee:set-variable variableName="requestId" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.transactionId ]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<async doc:name="Async" doc:id="762082eb-cd9d-4002-860f-20c3642e0121" >
+			<common-logging-extension:call-entry-logger doc:name="Call Entry Logger" doc:id="b63b1301-9f39-4a28-b338-469d70d8620f" RequestID="#[vars.transactionId]" TimeStamp="#[now()]" AppName="#[app.name]" AdditionalInfo="#[vars.additionalInfo]" messageCorrelationID="#[vars.messageCorrelationId]" MessageID="#[vars.finalMessageId]" LogPayload="#[if (p('is.logging.toggle') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '']" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async> 
+	</sub-flow>
+	<sub-flow name="log-dispatcher-exit-sub-flow" doc:id="c878b0e8-625e-45e0-bada-61336ea70b1d" >
+		<async doc:name="Async" doc:id="22e34a89-9733-4f68-ade3-d61ee4dc7732" >
+			<ee:transform doc:name="Additional Info" doc:id="928a3c03-9005-489c-bd2d-ccc42425c576">
+			<ee:message>
+
+			</ee:message>
+			<ee:variables>
+					<ee:set-variable variableName="additionalInfo" ><![CDATA[%dw 2.0
+output application/java
+var transactionEndTime = now()
+var latency = ( transactionEndTime as Number {unit: "milliseconds"}) 
+			- (if (vars.transactionStartTime != null) ((vars.transactionStartTime) as DateTime as Number {unit: "milliseconds"}) else 0) 
+---
+
+
+ "Transaction Start Time: " ++ vars.transactionStartTime as String
+ ++ "; Transaction End Time: " ++ transactionEndTime 
+ ++"; Transaction Latency: " ++ latency ++ " milliseconds"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+			<common-logging-extension:call-exit-logger doc:name="Call Exit Logger" doc:id="25246ed3-a5b8-48d4-ba23-ddc5151e7119" AppName="#[app.name]" TimeStamp="#[now()]" RequestID="#[vars.transactionId]" AdditionalInfo="#[vars.additionalInfo]" messageCorrelationID="#[vars.messageCorrelationId]" LogPayload="#[if (p('is.logging.toggle') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '']" MessageID="#[vars.finalMessageId]" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="log-process-entry-sub-flow" doc:id="881c5ba1-13ab-4904-9593-1823957ec022">	
+		<async doc:name="Async" doc:id="65f5c1e9-c7fa-4d15-a48e-cf5154dea227" >
+			<common-logging-extension:process-entry-logger doc:name="Process Entry Logger" doc:id="12fffbb5-1bb3-4693-ae1a-b29b0fe6d437" RequestID="#[vars.transactionId]" TimeStamp="#[now()]" AdditionalInfo="#['Transaction Start Time: ' ++ vars.transactionStartTime]" LogPayload="#[if (p('is.logging.toggle') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '']" messageCorrelationID="#[vars.messageCorrelationId]" AppName="#[app.name]" MessageID="#[vars.finalMessageId]" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="logging-sub-flow" doc:id="79ffeb22-8087-4515-892e-f61ccaa7547f">	
+		<async doc:name="Async" doc:id="3fb8fc73-70e0-4a45-b825-b477e246e347" >
+			<common-logging-extension:process-by-logger-level doc:name="Logger" doc:id="944ea9c1-5c31-441e-9189-9c3f29a72b61" RequestID="#[vars.transactionId]" TimeStamp="#[now()]" AdditionalInfo="#['Transaction Start Time: ' ++ vars.transactionStartTime]" LogPayload="#[if (vars.loggingPayload != null) vars.loggingPayload else '']" messageCorrelationID="#[vars.messageCorrelationId]" AppName="#[app.name]" MessageID="#[vars.finalMessageId]" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="log-process-exit-sub-flow" doc:id="7259d029-20dc-4cae-bff9-04348d2a334d" >
+		<async doc:name="Async" doc:id="ba812be2-e5cd-486a-9317-77bcf68d502e" >
+			<common-logging-extension:process-exit-logger doc:name="Process Exit Logger" doc:id="ebb18043-b3ed-4869-98d3-a1e00f67e830" RequestID="#[vars.transactionId]" TimeStamp="#[now()]" AdditionalInfo="#[vars.additionalInfo]" LogPayload="#[if (p('is.logging.toggle') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '']" messageCorrelationID="#[vars.messageCorrelationId]" AppName="#[app.name]" MessageID="#[vars.finalMessageId]" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="log-process-warn-sub-flow" doc:id="45976b7d-cdf0-4b6f-a8b9-77b20323993e" >
+		<async doc:name="Async" doc:id="f691c3f7-4622-476d-88e4-26fb3ad7c408" >
+			<common-logging-extension:warn-logger doc:name="Warn logger" doc:id="8731d48f-ed61-4075-8f65-c23c9370bb5d" RequestID="#[vars.transactionId]" TimeStamp="#[now()]" AdditionalInfo="#[vars.additionalInfo]" LogPayload="#[if (p('is.logging.toggle') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '']" messageCorrelationID="#[vars.messageCorrelationId]" AppName="#[app.name]" MessageID="#[vars.finalMessageId]" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="log-error-sub-flow" doc:id="aa86af58-a063-4f01-816d-d3097c1be5f6" >
+		<async doc:name="Async" doc:id="f6cd41a6-253c-4495-a1f1-0d62049ec11b" >
+			<common-logging-extension:error-logger doc:name="Error logger" doc:id="12e3e9a5-d4eb-45ff-b4dc-adae013d8e71" TimeStamp="#[now()]" LogPayload="#[if (p('is.logging.toggle') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '']" messageCorrelationID="#[vars.messageCorrelationId]" AppName="#[app.name]" RequestID="#[vars.transactionId]" MessageID="#[vars.finalMessageId]" AdditionalInfo="#[vars.additionalInfo]" FlowName="#[if (vars.flowName != null) vars.flowName else p('flow.name.undefined')]"/>
+		</async>
+	</sub-flow>
+</mule>

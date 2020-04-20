@@ -1,0 +1,21 @@
+{
+    "message-correlation-id": "123456789012346345678",
+    "transaction-start-time": "2018-08-02T16:58:12.121Z",
+    "lines": [{
+            "primary-key": "123",
+            "secondary-key": "abc",
+            "log-payload": {
+            	"content-type": "application/json",
+            	"data": {"Soumen":234}
+            }
+        },
+        {
+            "primary-key": "456",
+            "secondary-key": "def",
+            "log-payload": {
+            	"content-type": "application/json",
+            	"data": {"kishan":123}
+            }
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+#----Common Block---No change Needed----      
+cloudhub:
+  username: "![V1H6cIZG27BimoyWHnUmWwgd7Z72XsoF+lx6EKe7Hfc=]"
+  password: "![pU6khIodBBpK1c7QxH7VmdEtcJxtRvmoKBlI+hYGFqk=]"
+  
+smtp:
+  host: "mail.fatface.net"
+  port: "465"
+  user: "![XImJcfQv4D6cYan0i6XwPZi8Uxv0OkDQvTITnsw/onM=]"
+  password: "![r9f7FSUCH+2adxR8OeswFg==]"
+  subject: "Fatface API Exception"
+#----Common Block---No change Needed----
+    
+db:
+ audit: 
+  config:
+   host: "mule-sandbox.cm1i2vsjtzdf.eu-west-1.rds.amazonaws.com"
+   port: "1433"
+   user: "![AyD0mBi0zwPqptV8KbEJGkjzeMuTdVHL2AEWiq0N3sQ=]"
+   password: "![PX91DJD02zpJ0MJ3jLRKUw==]"
+   database: "FATFACE_UAT_DB" 
+
+sftp:
+  host: "ftp.fatface.com"
+  port: "22"
+  username: "![W49cMbSedB3HHfPcr0pWWyYHk27r5mLh++/a62Nglxg=]"
+  password: "![YoKYhq6QWsR9eW3AVcCh2TRSSvrwrp94baroSAHlBlg=]" 
+  
+sqs:
+  accessKey: "![0Bna5lThT35ukyJf1B4b+NBulG5Jn3QQkYSe2AQTrhI=]"
+  secretKey: "![YeUejrLAXF1G2lBwQcIhz9Sid46kdmSOB5j0CXeQxGBfNQRpQE+hxJQna0as7ws5]"
+  region: "![6lleIG6Qoif/fTA7pK+sUA==]"

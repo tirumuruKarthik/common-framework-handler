@@ -1,0 +1,46 @@
+http:
+  basePath: "/api/*"
+  port: "8081"
+  api:
+    p-template-api:
+      basePath: "/"
+      host: ""
+      port: ""
+      path: ""  
+      
+#----Common Block---No change Needed----      
+cloudhub:
+  username: "![0so5SqsEunWc4U+W5DRa5eJOhljaw4Nx0qJg4yp3qnA=]"
+  password: "![828g0ukkhaCDoayPBgPZ06Oa0uDELiXntFk5OykvNdk=]"
+  
+smtp:
+  host: "mail.fatface.net"
+  port: "465"
+  user: "![5/w01nYmhxyvgHVC8Uh0yvTYk/WLHWBP2ZU+9DMOSnw=]"
+  password: "![ae5QSfiTACKaB08EZlg0AA==]"
+  subject: "Fatface API Exception"
+#----Common Block---No change Needed----
+
+autodiscovery:
+  id: ""
+  flow: "x-template-api-main"
+
+db:
+ audit: 
+  config:
+   host: "mule-production.cqrprw6rtaub.eu-west-1.rds.amazonaws.com"
+   port: "1433"
+   user: "![l6tm9JzV+ULxt4hKV/MzKZ83Yn4cCE/917I1vt54IW4=]"
+   password: "![r6KAK6ZTbrr0hzQelsG8af4HTWiInKYoBUvqXIJ9Mlo=]"
+   database: "MULE_DB" 
+
+sftp:
+  host: "ftp.fatface.com"
+  port: "22"
+  username: "![hBYq3P3h6kCiXYBgZxMFGA==]"
+  password: "![LtYbkrW+7j7ggzPQPNal7Q/0d+v+b/22eIcYbhfeW3w=]" 
+  
+sqs:
+  accessKey: "![HUPOgqa/QyAmhhcFSFdICKQbbkOqmeVoTjBD+AVdN2U=]"
+  secretKey: "![Fq6D1+D6Lfgal8yEK17QktkXJGj9Orvt+Sph9eHUYIDsFg7mN8CKjpAamL6AHeq8]"
+  region: "![5yV0cMXIWtD0Vl58lOKrzQ==]"

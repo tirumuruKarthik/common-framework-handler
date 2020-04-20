@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:common-logging-extension="http://www.mulesoft.org/schema/mule/common-logging-extension"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/common-logging-extension http://www.mulesoft.org/schema/mule/common-logging-extension/current/mule-common-logging-extension.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+	
+	<sub-flow name="audit-receiver-entry-sub-flow" doc:id="ea582c77-8794-497a-858c-539329379c20" >
+		<choice doc:name="Choice" doc:id="7efc7152-ebee-4229-a31c-c9aa6b05a486" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="a542103c-7f73-4ec8-bd76-5bc39d3939c2">
+					<db:insert doc:name="Insert For Entry" doc:id="1c3e1322-9a36-46f9-a706-a973d57a6022" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'CALL ENTRY', :thread , :logMessage ,GETDATE() , :transactionStartTime ,1, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if(p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+			
+</db:insert>
+		</async>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="15fee410-5e11-453c-be0e-71a9afb8f987" message="Entry Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-dispatcher-exit-sub-flow" doc:id="4537c538-861f-42ff-a02e-f4d4d60369ba" >
+		<choice doc:name="Choice" doc:id="9303816f-1613-4d73-8150-1ed0c9a716ff" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="1ceff0e5-2c25-4ad5-8a53-12da036c50ac">
+			<db:insert doc:name="Insert For Exit" doc:id="d98643bf-7281-4bf0-915d-0377f90a683a" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'CALL EXIT' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,4, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if(p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+					
+</db:insert>
+		</async>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="23cac91b-a557-4cda-ab82-dfb272f77ce4" message="Exit Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-process-entry-sub-flow" doc:id="fdd7233f-db79-4783-b3ef-50735270d319" >
+		<choice doc:name="Choice" doc:id="69161d4d-859d-4d9a-90f9-a2219a15980f" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="b28b9029-7d26-48d6-97d0-1b652398fab8">
+			<db:insert doc:name="Insert For Process Entry" doc:id="9c70c9b9-e173-4748-9087-29d4309acaad" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'PROCESS ENTRY' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,2, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if( p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+					
+</db:insert>
+		</async>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="99acc6b8-eeb1-4806-8e57-d6f9ae99eeb8" message="Process Entry Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-process-exit-sub-flow" doc:id="2f62858f-1418-49cb-ad7d-288e54b0daee" >
+		<choice doc:name="Choice" doc:id="7cb84d94-2048-4403-bc3d-f62f3ce3c935" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="a3e38c48-4a16-4cc0-b250-e7ea1288b7fd">
+			<db:insert doc:name="Insert For Process Exit" doc:id="bafbec8f-e4d4-4da3-8c92-6ecce0fc96ee" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'PROCESS EXIT' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,5, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if(p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+					
+</db:insert>
+		</async>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="74f02482-568b-42b4-a750-60c6e925c80f" message="Process Exit Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-details-processing-sub-flow" doc:id="a5980cb8-d0de-4904-aaf0-9dd6836f008a" >
+		<choice doc:name="Choice" doc:id="d4ecd9fc-fe46-425a-9780-811ff5b2004b" >
+			<when expression="#[p('is.audit.details.toggle') == 'ON']">
+				<ee:transform doc:name="Audit Details Parameter" doc:id="b28e9355-0192-4fd8-ab90-13609b87e8db">
+					<ee:message>
+						<ee:set-payload resource="dwl/audit-details.dwl" />
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="messageCorrelationId" ><![CDATA[%dw 2.0
+output application/java
+---
+payload['message-correlation-id']]]></ee:set-variable>
+						<ee:set-variable variableName="transactionStartTime" ><![CDATA[%dw 2.0
+output application/java
+---
+payload['transaction-start-time']]]></ee:set-variable>
+						<ee:set-variable variableName="payloadMT" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<choice doc:name="Choice" doc:id="0e7cecdf-61fe-4882-a658-35ccfc9f8b4c" >
+					<when expression="payload !=null and payload != []">
+						<async doc:name="Async" doc:id="51cc49be-6146-48ca-8bfd-56db30cb3fc6" >
+							<flow-ref doc:name="Audit Details Batch Flow" doc:id="c96e7966-e591-48fa-8024-26977651e091" name="audit-details-processing-batch-flow" />
+						</async>
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="No Auditing Set" doc:id="46ab7b1c-3e4d-4821-a0fa-9f3f6e0a60f3" message="No Data Exist for Auditing"/>
+					</otherwise>
+				</choice>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="ceef27b1-7b13-48a9-b6ab-28836fb718ae" message="Audit Details Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-details-processing-batch-flow" doc:id="79dc5e77-e4ec-450a-89d2-bff7e5129ab9" >
+		<batch:job jobName="common-auditing-framework-batch-job" doc:id="2e123053-b5d2-47e4-aa9e-afd45a8e2ff9" maxFailedRecords="-1" schedulingStrategy="ROUND_ROBIN">
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="fc54dd77-fa4f-4065-9302-92638013bb99" >
+					<db:insert doc:name="Insert For Audit Details" doc:id="bb015d75-9f0a-492b-aefa-3acebad9f828" config-ref="Database_Config">
+							<db:sql>INSERT INTO [dbo].[t_audit_details] ([audit_id] ,[correlation_id] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[pri_biz_key],[sec_biz_key])
+	VALUES (:auditId, :corrlationId, :logMessage , GETDATE(), :transactionStartTime , :primaryKey, :secondaryKey);</db:sql>
+							<db:input-parameters><![CDATA[#[{
+		auditId:'',
+		logMessage: if(payload != null and payload != '') write(payload['log-payload'].data, payload['log-payload']['content-type']) else '',
+		primaryKey: payload['primary-key'],
+		secondaryKey: payload['secondary-key'],
+		transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+		corrlationId: vars.messageCorrelationId
+	}]]]></db:input-parameters>
+						
+			</db:insert>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Auditing Completed" doc:id="3185f302-a566-442c-a874-4a3a6b9ba0bb" message="All audit line data are processed"/>
+			</batch:on-complete>
+		</batch:job>
+	</sub-flow>
+	<sub-flow name="audit-success-sub-flow" doc:id="066c00e3-544f-418c-8b9d-3761831f5a52" >
+		<choice doc:name="Choice" doc:id="7414f2da-257e-47b2-932a-41f6447aff9b" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="e348bcba-1173-4136-aa32-802d4b26f3d0" >
+					<db:insert doc:name="Insert For Success" doc:id="7090bbe4-8b71-4231-8b96-cc04c653ae58" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'SUCCESS' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,0, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if(p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+					
+</db:insert>
+				</async>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="c1d1a0b2-c638-4963-9af0-cdaa66b77195" message="Success Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-warning-sub-flow" doc:id="b856cb2a-0295-4790-8885-69bb72aadd66" >
+		<choice doc:name="Choice" doc:id="4684385c-c5c9-4bab-b84f-db9ca8262bc2" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="0753c505-4bf8-413e-8870-3ca0fce2b196">
+			<db:insert doc:name="Insert For Warning" doc:id="499df2f4-1e6d-479b-86da-7fe4df4523af" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'WARN' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,00, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if(p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+					
+</db:insert>
+		</async>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="356e60e8-b563-412d-bfa7-6786466a2afe" message="Warning Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="audit-error-sub-flow" doc:id="b1cf2018-d2b8-4b2b-a577-6bf61831e4bf" >
+		<choice doc:name="Choice" doc:id="0cecc56b-99ee-45a0-bd0d-6bfb55e9de33" >
+			<when expression="#[p('is.audit.toggle') == 'ON']">
+				<async doc:name="Async" doc:id="47ba336f-77aa-43f6-945b-377b2681f8af">
+					<db:insert doc:name="Insert For Error" doc:id="0a2a9479-1092-4d56-a59f-ab5342d5b25d" config-ref="Database_Config">
+						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
+VALUES (:requestId , :finalMessageId, :corrlationId ,'ERROR' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,-1, :primaryKey, :secondaryKey);</db:sql>
+						<db:input-parameters ><![CDATA[#[{
+	requestId:vars.requestId,
+	finalMessageId:vars.finalMessageId,
+	logMessage: if(p('is.audit.payload') == 'ON' and payload != null and payload != '' and payload.^['mimeType'] != '*/*') write(payload, payload.^['mimeType']) else '',
+	thread: if (vars.flowName != null) vars.flowName else p('flow.name.undefined'),
+	primaryKey: vars.primaryKey,
+	secondaryKey: vars.secondaryKey,
+	transactionStartTime: if (vars.transactionStartTime != null) vars.transactionStartTime as DateTime { class : "java.sql.Timestamp"} else now() as DateTime { class : "java.sql.Timestamp"},
+	corrlationId: vars.messageCorrelationId
+}]]]></db:input-parameters>
+					
+</db:insert>
+		</async>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="No Auditing Set" doc:id="b483311e-a99f-48cf-b1ae-d10a43943d19" message="Error Audit Logging is turned OFF"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

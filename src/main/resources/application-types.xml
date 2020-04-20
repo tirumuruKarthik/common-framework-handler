@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="error" format="json">
+      <types:shape format="weave" example="examples/error.json"><![CDATA[%dw 2.0
+
+type error = {|
+  error: {|
+    errorCode: String, 
+    errorType: {|
+      identifier: String, 
+      parentErrorType: {|
+        identifier: String, 
+        parentErrorType: {|
+          identifier: String, 
+          parentErrorType: Null, 
+          namespace: String
+        |}, 
+        namespace: String
+      |}, 
+      namespace: String
+    |}, 
+    errorDateTime: String, 
+    errorMessage: String, 
+    errorDescription: String
+  |}
+|} {"example": "{\"error\":{\"errorCode\":\"NOT_FOUND\",\"errorType\":{\"identifier\":\"NOT_FOUND\",\"parentErrorType\":{\"identifier\":\"ANY\",\"parentErrorType\":{\"identifier\":\"ANY\",\"parentErrorType\":null,\"namespace\":\"MULE\"},\"namespace\":\"APIKIT\"},\"namespace\":\"APIKIT\"},\"errorDateTime\":\"2019-08-21T12:14:02\",\"errorMessage\":\"Undefined error message. Please, improve your error handling!\",\"errorDescription\":\"\/orderaas\/122\"}}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="orderxml" format="xml">
+      <types:example format="xml" element="{http://www.demandware.com/xml/impex/order/2006-10-31}orders" location="examples/orders-1.xml"/>
+    </types:type>
+    <types:type name="audit-details" format="json">
+      <types:shape format="weave" example="examples/audit-details.json"><![CDATA[%dw 2.0
+
+type audit_details = {|
+  "message-correlation-id": String, 
+  "transaction-start-time": String, 
+  lines: Array<{|    "primary-key": String,     "secondary-key": String,     payload: String  |}>
+|} {"example": "{\"message-correlation-id\":\"123456789012345\",\"transaction-start-time\":\"2019-10-15 12:18:55.343\",\"lines\":[{\"primary-key\":\"123\",\"secondary-key\":\"abc\",\"payload\":\"{}\"},{\"primary-key\":\"456\",\"secondary-key\":\"def\",\"payload\":\"{}\"}]}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#928a3c03-9005-489c-bd2d-ccc42425c576"/>
+  <types:enrichment select="#ea453115-2ee0-46c5-8df1-5528c17650a2"/>
+  <types:enrichment select="#1e5a2827-4723-4501-8c73-1736be69981c"/>
+  <types:enrichment select="#b9a498c1-4573-46e3-abf8-eb9be66cdc03"/>
+  <types:enrichment select="#a8dfe333-5a21-485c-a37a-151562202a97"/>
+  <types:enrichment select="#7f09d129-8d5b-40e9-a6db-8e1984b24cdb"/>
+  <types:enrichment select="#738a0e4e-4399-4ca0-bde5-c2fe58028c57"/>
+  <types:enrichment select="#b28e9355-0192-4fd8-ab90-13609b87e8db">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="audit-details"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

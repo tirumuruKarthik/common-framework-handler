@@ -1,0 +1,1108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+	xmlns:common-logging-extension="http://www.mulesoft.org/schema/mule/common-logging-extension"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/common-logging-extension http://www.mulesoft.org/schema/mule/common-logging-extension/current/mule-common-logging-extension.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+
+<error-handler name="GlobalExceptionStrategy" doc:id="1f4aed6f-efe4-43e8-925f-23ec154b1a5f">
+
+		<!-- APIKit router related exceptions -->
+		<on-error-continue type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6ad02747-edb1-4307-bf89-928e409e32ad" >
+			<ee:transform doc:name="Error Variables" doc:id="6f2a0da7-36d4-4828-8637-764ac5aa08d3" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.400')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:METHOD_NOT_ALLOWED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b63b14eb-b692-47df-bd87-1c0ac1f91ef9" >
+     	 	<ee:transform doc:name="Error Variables" doc:id="a9304bb1-4403-43ee-96f8-e5432c7d5aac" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+405]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+405]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.405')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+     	 	<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:NOT_ACCEPTABLE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="26c0ceb2-fb3f-44c9-92b0-095aca621ae2" >
+     		<ee:transform doc:name="Error Variables" doc:id="75032e03-ef3e-41e2-8fd3-8124ad39bd98" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+406]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+406]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.406')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+     		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9e54978c-18af-4db3-813a-93e0d49968db" >
+    	  	<ee:transform doc:name="Error Variables" doc:id="c1f71040-5223-4f42-98fc-96373f643127" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+404]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+404]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.404')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+    	  	<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:UNSUPPORTED_MEDIA_TYPE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f10065" >
+      		<ee:transform doc:name="Error Variables" doc:id="e908a493-620e-4ca6-b748-9728a7e795ef" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+415]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+415]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.415')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>	
+		
+		<!-- DB Related issues -->
+		<on-error-continue type="DB:BAD_SQL_SYNTAX" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11015" >
+      		<ee:transform doc:name="Error Variables" doc:id="f7a5e39b-e58f-4478-929c-9fcc3cf77e9c" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.db.syntax')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="DB:CONNECTIVITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11016" >
+      		<ee:transform doc:name="Error Variables" doc:id="5bd38ee1-de44-4b52-8c18-6adad723e996" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.db.connection')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="DB:QUERY_EXECUTION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11017" >
+      		<ee:transform doc:name="Error Variables" doc:id="616af012-ef2f-47fa-ba00-2743ac45dc1c" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.db.query')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="DB:RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11018" >
+      		<ee:transform doc:name="Error Variables" doc:id="6a675090-233d-4eb7-9889-4aa47e917646" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.db.retry')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		
+		<!-- SFTP Related issues -->
+		<on-error-continue type="SFTP:ACCESS_DENIED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1c06d5d2-850e-4931-94dc-1b86ad120ef1" >
+      		<ee:transform doc:name="Error Variables" doc:id="27c17b28-e885-4162-9f43-205b9b7c9392" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+403]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+403]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.sftp.access')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="25315e25-3c82-447a-9b87-b39946b36b58" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="SFTP:CONNECTIVITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0163d312-00e4-4e5e-a150-abc46d40b8ac" >
+      		<ee:transform doc:name="Error Variables" doc:id="76e09cdd-4841-4456-baba-c535a7f53b88" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.sftp.connection')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="46d74506-9b94-4e8a-a814-8b6d4eb95e08" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="SFTP:ILLEGAL_PATH" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c5fe2db7-73d9-42eb-a4fb-daa0b64f1148" >
+      		<ee:transform doc:name="Error Variables" doc:id="d316bf11-a543-4e74-92fb-370e8e7c9f14" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.sftp.path')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="62401abd-59fd-4b8c-b9e4-1788ac1bef80" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="SFTP:RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6f015904-58f0-4a66-8dee-bff44a1409a7" >
+      		<ee:transform doc:name="Error Variables" doc:id="886fab52-faed-474c-a258-7898ac6483e2" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.sftp.retry')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="2f8a0d22-c74e-49a4-b836-b198432fc495" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		
+		<!-- HTTP Requster Related error handling -->	
+		<on-error-continue type="HTTP:BAD_REQUEST" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11000" >
+      		<ee:transform doc:name="Error Variables" doc:id="21f9dbae-e897-4361-8e5e-764a4cef06d6" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.400')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:CLIENT_SECURITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11001" >
+      		<ee:transform doc:name="Error Variables" doc:id="3a63867f-cf35-42f2-9921-4736cbd1ef69" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+401]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+401]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.401')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:CONNECTIVITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11002" >
+      		<ee:transform doc:name="Error Variables" doc:id="921ac8d2-b20a-4868-8739-94392ad2ce73" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.503')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:FORBIDDEN" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11003" >
+      		<ee:transform doc:name="Error Variables" doc:id="8405a05f-a56d-4a2d-a805-8776d94150d4" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+403]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+403]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.403')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:INTERNAL_SERVER_ERROR" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11004" >
+      		<ee:transform doc:name="Error Variables" doc:id="1b251b5a-8423-459b-9c76-48223dad6a10" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.500')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:METHOD_NOT_ALLOWED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11005" >
+     	 	<ee:transform doc:name="Error Variables" doc:id="3e9cc21b-7832-4305-95bf-b9974942016b" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+405]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+405]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.405')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+     	 	<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:NOT_ACCEPTABLE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11006" >
+      		<ee:transform doc:name="Error Variables" doc:id="52573d2e-28c0-4af9-9f6d-c593a4ade19b" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+406]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+406]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.406')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:NOT_FOUND" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11007" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="064694a0-1e03-4f17-82b5-314abfe14678" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+404]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+404]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.404')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:PARSING" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11008" >
+			<ee:transform doc:name="Error Variables" doc:id="1200d893-3fac-4caa-bffc-d508200b34ba" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.http.parsing')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11009" >
+			<ee:transform doc:name="Error Variables" doc:id="326de7cf-3e13-4501-bfeb-25abfc7d1799" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.503')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:SECURITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11010" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="48fb82af-e360-45e0-a7a5-efc7ae2f3b8c" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+401]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+401]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.401')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:TIMEOUT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11011" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="2049165d-aafa-41fb-bbc7-698429073cc0" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+504]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+504]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.504')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:TOO_MANY_REQUESTS" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11012" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="29a4b128-40a2-47b1-981c-63cfffe56202" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+429]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+429]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.429')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:UNAUTHORIZED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11013" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="642590a0-f6f2-481c-879a-67b2682a0029" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+403]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+403]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.403')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:UNSUPPORTED_MEDIA_TYPE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1f49c5b1-daef-449b-a56b-686508f11014" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="d420cc45-e56a-4642-beea-4212ca712c91" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+415]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+415]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.415')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		
+		<!-- Streaming related exception -->
+		<on-error-continue type="STREAM_MAXIMUM_SIZE_EXCEEDED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="660c144f-0c83-468d-9dfd-1e4dba2b1fa1" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="a508bf28-8441-46ff-8ce8-f3126df296e7" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.generic.stream')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		
+		<!-- Generic CONNECTIVITY Related Exception handling start. Order matters -->
+		<on-error-continue type="RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="dd0bc428-ce88-46c8-83c7-c81d54d0352d" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="813a6a74-c3d6-4723-bcd9-a533e8d2616d" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.503')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="REDELIVERY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="dd0bc428-ce88-46c8-83c7-c81d54d0352d" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="65c44ba7-5791-4ca7-9e3b-585a753e1e85" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.generic.redelivery')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="CONNECTIVITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="259cc9ce-cce1-4dd5-ae44-86b1fc7667fc" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="f7b82113-8992-4c58-bcb2-063c3682c2de" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+503]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.generic.connectivity')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="TIMEOUT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d1cf5b68-650c-4de2-aa26-e73ff556ab0e" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="c9cd791d-646c-4d6f-8198-faf8cfb86698" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+504]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+504]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.generic.timeout')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<!-- Generic CONNECTIVITY Exception handling end -->
+		
+		<on-error-continue type="TRANSFORMATION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a8f802c7-6231-4363-baca-c7d309de8a67" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="4e6815ab-a24f-483a-85c7-1b9b554aff32" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.transform')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		
+		<on-error-continue type="SCRIPTING:COMPILATION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8e4a93be-fcea-4006-83a5-c5bd5306ec31" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="a680929e-b80e-4272-b2b2-19249c6554e9" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.script.compile')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="ANY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5355a5f7-d870-477e-9c34-1ac64f0efaff" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="1d04fbeb-a3aa-4a92-82bc-7f7769089dd9" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.script.execute')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="SCRIPTING:UNKNOWN_ENGINE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5be3bb50-7d3e-4a47-b2c7-7368cf3c9222" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="90760ac3-987e-485b-9cdb-a0c28fe66188" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.script.unknown')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		
+		<on-error-continue type="EXPRESSION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8fe29b0a-d6e4-421f-b4fa-716c6e1f0744" >
+			
+			<ee:transform doc:name="Error Variables" doc:id="9a761b74-9601-49b6-948f-e0ff222e5a6f" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.expression')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>	
+		<on-error-continue type="ROUTING" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d1ac65da-c00f-478d-811c-91d4ce2ac640" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="788969ad-6c4d-4180-bcfb-4c06031efabf" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.routing')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="SECURITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6c33b909-ce81-40e6-bd41-b5383e085cbd" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="0f62aa64-1ae2-4698-94dc-f6d93ae6dd82" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+400]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.generic.security')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ef951fe8-521e-4c3a-b907-a77d766679b5" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="COMPRESSION:COULD_NOT_COMPRESS" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ae2d02b3-78d4-499f-9515-d4a2d4cd01a8" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="dfcf40c4-c553-4728-9a2a-f23cc01a7592" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.compress.notCompress')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="3d1880e8-99f6-4e98-9ff8-1fb6c0107f7a" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="COMPRESSION:INVALID_ARCHIVE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="61fe7b9f-efc1-4cfa-95ba-ca0d598258ba" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="c6870b45-b47b-4374-b5ff-1b4b1e168927" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.compress.invalidFormat')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="2584f46a-2f38-4260-a261-4b667f284a06" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="COMPRESSION:TOO_MANY_ENTRIES" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="45692549-a186-4c2c-ba4c-58fd605906d8" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="fd8c01aa-7370-4ee6-afa2-c76f44d2d89a" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.compress.multipleEntry')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="2476d7f6-862d-4f13-bae2-eca73d751e81" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="COMPRESSION:COULD_NOT_DECOMPRESS" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f11c698f-2a2a-4485-b171-55142171f15d" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="137fb75a-ab05-4696-b602-689208605300" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.compress.notDecompress')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="9431dfd7-ae20-4b45-a51c-302dd6776bb4" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="REPROCESS:LEVEL_2_RETRY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e92e008e-77bd-4fd1-97b1-4b5bf9c621e5" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="fc3e59eb-b0ba-42b8-ad7d-ba559d8ac947" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.reprocessing.level2retry')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Common Queue Processing Sub Flow" doc:id="05ceb881-6d80-4187-94f4-4ea074b2fe27" name="common-queue-processing-sub-flow" />
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ffa82c37-7f22-430b-ae06-70c4c5f2fea6" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<!-- If none of the above matches then handle the exception using generic handler -->
+		 <on-error-continue type="FF_CLOUDHUB:HELPDESK_ALERT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6570345c-12c4-46ed-a4bd-53a2f415b40d" >
+			
+      		<ee:transform doc:name="Error Variables" doc:id="9df45352-3f53-4bef-a61a-5340fa0cef57" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+p('error.msg.cloudhub.alert')]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="3022de88-bc64-4eb2-9d6a-45b41937b7bc" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+		<on-error-continue type="DMF_EXPORT:SCHEDULER_RETRY_DELAY_TIME_INSUFFICIENT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="da39fa06-6f63-4880-9aa8-8f852acedba6">
+			   <set-variable value="Scheduler retry delay time doesn't meet to start. so exit gracefully" doc:name="Set Logging Payload" doc:id="6d9aba1d-ad88-4132-9446-afbb7573dd29" variableName="loggingPayload" />
+                <flow-ref doc:name="Logging Message" doc:id="31a2a5ae-7e57-41aa-868a-160716ecc86e" name="logging-sub-flow"/>
+	
+		</on-error-continue>
+		<!-- If none of the above matches then handle a the exception using generic handler -->
+		<on-error-continue type="ANY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7f8f613c-a88d-4d8c-9985-6f53b385c6e3">
+			<set-variable value="#[500]" doc:name="Set the HTTP Status - 500" doc:id="57b6ec34-4f39-4855-b808-657bd93aca11" variableName="httpStatus" />
+			<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="2eaf7e11-769e-4195-9e61-d9661fa892f8" name="global-prepare-error-response-sub-flow"/>
+		</on-error-continue>
+	</error-handler>
+   
+    <sub-flow name="common-queue-processing-sub-flow" doc:id="cae6ac7c-3007-4bac-980f-3fd9aa1357b0" >
+		<set-variable value="common-queue-processing-sub-flow" doc:name="Flow Name" doc:id="a98a1d89-7448-4d3d-b779-3fbedd47b6fc" variableName="flowName" />
+		<flow-ref doc:name="Log Process Entry" doc:id="b53c352e-1d2f-4bf8-81fb-6ce2f9512932" name="log-process-entry-sub-flow"/>
+		<flow-ref doc:name="Audit Entry Flow" doc:id="2651e177-8070-4405-8991-fcd9ea12421c" name="audit-process-entry-sub-flow"/>
+		<ee:transform doc:name="Create Queue Message Transformation" doc:id="51e9287c-0394-4f72-9789-3701bc6199fa" >
+			<ee:message >
+				<ee:set-payload resource="dwl/create-queue-msg.dwl" />
+			</ee:message>
+		</ee:transform>
+		<sqs:send-message doc:name="Send message" doc:id="8ed49de8-9f6f-49a4-89eb-9347a168e355" config-ref="Amazon_SQS_Configuration" queueUrl="#[vars.targetQueueUrl]">
+			<reconnect frequency="${retry.frequency}" count="${retry.attempts}" />
+		</sqs:send-message>
+		<flow-ref doc:name="Audit Exit Flow" doc:id="ea2cb9ea-eab7-4eae-9728-0464fb782b1a" name="audit-process-exit-sub-flow"/>
+		<flow-ref doc:name="Log Process Exit" doc:id="abd1873c-eba8-4a5b-be86-b33193e72af4" name="log-process-exit-sub-flow"/>
+	</sub-flow>
+	<sub-flow name="common-smtp-sub-flow" doc:id="b36c7356-2370-4785-afe2-d93c05e2f2df" >
+		<set-variable value="#['common-smtp-sub-flow']" doc:name="Flow Name" doc:id="05039e1e-c39a-4d30-bb97-c173fdedf2e0" variableName="flowName"/>
+		<flow-ref doc:name="Log Process Entry" doc:id="c574759b-8d7a-42f5-b8ec-89cd7ec79138" name="log-process-entry-sub-flow" />
+		<flow-ref doc:name="Audit Entry Flow" doc:id="cafbd0cd-884d-4cf5-8e3e-487c37bc1fb0" name="audit-process-entry-sub-flow"/>
+		<email:send doc:name="Send Mail" doc:id="23e29bdd-a348-4506-ba08-1beb9bff94c0" config-ref="Email_SMTP" fromAddress="no-reply@fatface.net" subject="${smtp.subject}">
+			<email:to-addresses >
+				<email:to-address value="Mulesoft-ApiOwner@fatface.net" />
+			</email:to-addresses>
+			<email:body >
+				<email:content ><![CDATA[#[write(payload, payload.^['mimeType'])]]]></email:content>
+			</email:body>
+		</email:send>
+		<flow-ref doc:name="Audit Exit Flow" doc:id="e75d5983-876c-4fed-9aeb-ff59c38b9838" name="audit-process-exit-sub-flow"/>
+		<flow-ref doc:name="Log Process Exit" doc:id="aaf5dbc2-ff16-4314-9aa2-ff911e5ee727" name="log-process-exit-sub-flow" />
+	</sub-flow>
+	<flow name="raise-error-flow" doc:id="e94f26de-2c0a-491f-a39f-291b05d11e92" >
+		<raise-error doc:name="Raise error - REPROCESS:LEVEL_2_RETRY" doc:id="dffcc8e2-a7b9-402f-a7f2-110683b73c05" type="REPROCESS:LEVEL_2_RETRY" description="Level 2 Retry Mechanism Processing"/>
+		<raise-error doc:name="Raise error - FF_CLOUDHUB:HELPDESK_ALERT" doc:id="f4497280-d6ec-4438-a5d5-5b495f226e22" type="FF_CLOUDHUB:HELPDESK_ALERT" description="Sending Alert to Help Desk" />
+		<raise-error doc:name="Raise error - DMF_EXPORT:SCHEDULER_RETRY_DELAY_TIME_FAILED" doc:id="04f7fe13-ede5-4801-8a77-c1e6570f22e3" type="DMF_EXPORT:SCHEDULER_RETRY_DELAY_TIME_INSUFFICIENT" description="DMF export scheduler retry time doesn't meet the configured value set"/>
+	</flow>
+	<sub-flow name="global-prepare-error-response-sub-flow" doc:id="144512c8-8979-4ad1-ad6e-4daef8496754">
+		<set-variable value="#['global-prepare-error-response-sub-flow']" doc:name="Flow Name" doc:id="bdf0d437-8a19-4f4c-b0fb-7ae2f05bbfc8" variableName="flowName"/>
+		<ee:transform doc:name="Error Response Transformation" doc:id="b3a71808-796b-4367-ab57-ae97cd08d47a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	error: {
+		errorCode: if(vars.errorCode != null) vars.errorCode else error.errorType.identifier,
+		errorType: error.errorType,
+		errorDateTime: now() as String { format: "yyyy-MM-dd'T'HH:mm:ss" },
+		errorMessage: if(vars.errorMessage != null) vars.errorMessage else 'Undefined error message. Please, improve your error handling!',
+		errorDescription: error.description
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Error String" doc:id="295162bd-4f0b-44c3-8cea-2dd4137c0bad" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+'Exception Occurred with Error Code: ' ++ payload.error.errorCode ++ ', Error Message: ' ++ payload.error.errorMessage ++ (if( vars.finalMessageId != null ) (',  Message ID: ' ++ vars.finalMessageId) else '') ++ (if( vars.transactionId != null ) (', Request ID: ' ++ vars.transactionId) else '') ++  (if( vars.additionalInfo != null )  (', Additional Info: ' ++ vars.additionalInfo) else '') ]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Log Error" doc:id="9dd62ffe-b77e-40ac-acbf-1ada687d955f" name="log-error-sub-flow" />
+		<!-- <flow-ref doc:name="Audit Error" doc:id="a925d335-5826-401c-8734-fa914caf2f98" name="audit-error-sub-flow" />
+		<cloudhub:create-notification doc:name="Create Notification" doc:id="f72d2ba7-c8b3-4155-a0b1-d9e83f0653ed" config-ref="CloudHub_Config" domain="${domain}" priority="ERROR" transactionId="#[vars.transactionId]">
+		</cloudhub:create-notification> -->
+		<set-variable value="Cloudhub alert sent" doc:name="Logging Payload" doc:id="a7d0e333-81b0-4716-a62f-d70e114fd0ea" variableName="loggingPayload"/>
+		<flow-ref doc:name="Log Payload" doc:id="668998a2-eaae-4a5c-a999-5dc6dd00dfe5" name="logging-sub-flow"/>
+    </sub-flow>
+</mule>
+	
