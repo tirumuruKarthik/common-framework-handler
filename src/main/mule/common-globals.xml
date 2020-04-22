@@ -29,9 +29,6 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		<secure-properties:encrypt algorithm="AES" mode="CBC"/>
 	</secure-properties:config>
 	<configuration doc:name="Configuration" doc:id="54fa0143-7e1d-48e0-b340-a4e48738fc8d1" defaultErrorHandler-ref="GlobalExceptionStrategy" />
-	<sqs:config name="Amazon_SQS_Configuration" doc:name="Amazon SQS Configuration" doc:id="2b1b5722-42da-4e24-b1b0-e12becbd5d651">
-		<sqs:basic-connection accessKey="${secure::sqs.accessKey}" secretKey="${secure::sqs.secretKey}" region="${secure::sqs.region}"/>
-	</sqs:config>
 	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="5adafb79-4340-4a30-8061-3bda81394ea11" >
 		<email:smtps-connection host="${secure::smtp.host}" user="${secure::smtp.user}"  tlsContext="TLS_Context" password="${secure::smtp.password}" port="${secure::smtp.port}"/>
 	</email:smtp-config>

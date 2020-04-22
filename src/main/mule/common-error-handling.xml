@@ -976,29 +976,6 @@ p('error.msg.compress.notDecompress')]]></ee:set-variable>
 			</ee:transform>
       		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="9431dfd7-ae20-4b45-a51c-302dd6776bb4" name="global-prepare-error-response-sub-flow"/>
 		</on-error-continue>
-		<on-error-continue type="REPROCESS:LEVEL_2_RETRY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e92e008e-77bd-4fd1-97b1-4b5bf9c621e5" >
-			
-      		<ee:transform doc:name="Error Variables" doc:id="fc3e59eb-b0ba-42b8-ad7d-ba559d8ac947" >
-				<ee:message >
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
-output application/java
----
-500]]></ee:set-variable>
-					<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
-output application/java
----
-500]]></ee:set-variable>
-					<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
-output application/java
----
-p('error.msg.reprocessing.level2retry')]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-			<flow-ref doc:name="Common Queue Processing Sub Flow" doc:id="05ceb881-6d80-4187-94f4-4ea074b2fe27" name="common-queue-processing-sub-flow" />
-      		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="ffa82c37-7f22-430b-ae06-70c4c5f2fea6" name="global-prepare-error-response-sub-flow"/>
-		</on-error-continue>
 		<!-- If none of the above matches then handle the exception using generic handler -->
 		 <on-error-continue type="FF_CLOUDHUB:HELPDESK_ALERT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6570345c-12c4-46ed-a4bd-53a2f415b40d" >
 			
@@ -1022,33 +999,12 @@ p('error.msg.cloudhub.alert')]]></ee:set-variable>
 			</ee:transform>
       		<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="3022de88-bc64-4eb2-9d6a-45b41937b7bc" name="global-prepare-error-response-sub-flow"/>
 		</on-error-continue>
-		<on-error-continue type="DMF_EXPORT:SCHEDULER_RETRY_DELAY_TIME_INSUFFICIENT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="da39fa06-6f63-4880-9aa8-8f852acedba6">
-			   <set-variable value="Scheduler retry delay time doesn't meet to start. so exit gracefully" doc:name="Set Logging Payload" doc:id="6d9aba1d-ad88-4132-9446-afbb7573dd29" variableName="loggingPayload" />
-                <flow-ref doc:name="Logging Message" doc:id="31a2a5ae-7e57-41aa-868a-160716ecc86e" name="logging-sub-flow"/>
-	
-		</on-error-continue>
 		<!-- If none of the above matches then handle a the exception using generic handler -->
 		<on-error-continue type="ANY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7f8f613c-a88d-4d8c-9985-6f53b385c6e3">
 			<set-variable value="#[500]" doc:name="Set the HTTP Status - 500" doc:id="57b6ec34-4f39-4855-b808-657bd93aca11" variableName="httpStatus" />
 			<flow-ref doc:name="Global Prepare Error Response Sub Flow" doc:id="2eaf7e11-769e-4195-9e61-d9661fa892f8" name="global-prepare-error-response-sub-flow"/>
 		</on-error-continue>
 	</error-handler>
-   
-    <sub-flow name="common-queue-processing-sub-flow" doc:id="cae6ac7c-3007-4bac-980f-3fd9aa1357b0" >
-		<set-variable value="common-queue-processing-sub-flow" doc:name="Flow Name" doc:id="a98a1d89-7448-4d3d-b779-3fbedd47b6fc" variableName="flowName" />
-		<flow-ref doc:name="Log Process Entry" doc:id="b53c352e-1d2f-4bf8-81fb-6ce2f9512932" name="log-process-entry-sub-flow"/>
-		<flow-ref doc:name="Audit Entry Flow" doc:id="2651e177-8070-4405-8991-fcd9ea12421c" name="audit-process-entry-sub-flow"/>
-		<ee:transform doc:name="Create Queue Message Transformation" doc:id="51e9287c-0394-4f72-9789-3701bc6199fa" >
-			<ee:message >
-				<ee:set-payload resource="dwl/create-queue-msg.dwl" />
-			</ee:message>
-		</ee:transform>
-		<sqs:send-message doc:name="Send message" doc:id="8ed49de8-9f6f-49a4-89eb-9347a168e355" config-ref="Amazon_SQS_Configuration" queueUrl="#[vars.targetQueueUrl]">
-			<reconnect frequency="${retry.frequency}" count="${retry.attempts}" />
-		</sqs:send-message>
-		<flow-ref doc:name="Audit Exit Flow" doc:id="ea2cb9ea-eab7-4eae-9728-0464fb782b1a" name="audit-process-exit-sub-flow"/>
-		<flow-ref doc:name="Log Process Exit" doc:id="abd1873c-eba8-4a5b-be86-b33193e72af4" name="log-process-exit-sub-flow"/>
-	</sub-flow>
 	<sub-flow name="common-smtp-sub-flow" doc:id="b36c7356-2370-4785-afe2-d93c05e2f2df" >
 		<set-variable value="#['common-smtp-sub-flow']" doc:name="Flow Name" doc:id="05039e1e-c39a-4d30-bb97-c173fdedf2e0" variableName="flowName"/>
 		<flow-ref doc:name="Log Process Entry" doc:id="c574759b-8d7a-42f5-b8ec-89cd7ec79138" name="log-process-entry-sub-flow" />
@@ -1065,9 +1021,7 @@ p('error.msg.cloudhub.alert')]]></ee:set-variable>
 		<flow-ref doc:name="Log Process Exit" doc:id="aaf5dbc2-ff16-4314-9aa2-ff911e5ee727" name="log-process-exit-sub-flow" />
 	</sub-flow>
 	<flow name="raise-error-flow" doc:id="e94f26de-2c0a-491f-a39f-291b05d11e92" >
-		<raise-error doc:name="Raise error - REPROCESS:LEVEL_2_RETRY" doc:id="dffcc8e2-a7b9-402f-a7f2-110683b73c05" type="REPROCESS:LEVEL_2_RETRY" description="Level 2 Retry Mechanism Processing"/>
 		<raise-error doc:name="Raise error - FF_CLOUDHUB:HELPDESK_ALERT" doc:id="f4497280-d6ec-4438-a5d5-5b495f226e22" type="FF_CLOUDHUB:HELPDESK_ALERT" description="Sending Alert to Help Desk" />
-		<raise-error doc:name="Raise error - DMF_EXPORT:SCHEDULER_RETRY_DELAY_TIME_FAILED" doc:id="04f7fe13-ede5-4801-8a77-c1e6570f22e3" type="DMF_EXPORT:SCHEDULER_RETRY_DELAY_TIME_INSUFFICIENT" description="DMF export scheduler retry time doesn't meet the configured value set"/>
 	</flow>
 	<sub-flow name="global-prepare-error-response-sub-flow" doc:id="144512c8-8979-4ad1-ad6e-4daef8496754">
 		<set-variable value="#['global-prepare-error-response-sub-flow']" doc:name="Flow Name" doc:id="bdf0d437-8a19-4f4c-b0fb-7ae2f05bbfc8" variableName="flowName"/>
@@ -1098,9 +1052,9 @@ output application/json
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Log Error" doc:id="9dd62ffe-b77e-40ac-acbf-1ada687d955f" name="log-error-sub-flow" />
-		<!-- <flow-ref doc:name="Audit Error" doc:id="a925d335-5826-401c-8734-fa914caf2f98" name="audit-error-sub-flow" />
+		<flow-ref doc:name="Audit Error" doc:id="a925d335-5826-401c-8734-fa914caf2f98" name="audit-error-sub-flow" />
 		<cloudhub:create-notification doc:name="Create Notification" doc:id="f72d2ba7-c8b3-4155-a0b1-d9e83f0653ed" config-ref="CloudHub_Config" domain="${domain}" priority="ERROR" transactionId="#[vars.transactionId]">
-		</cloudhub:create-notification> -->
+		</cloudhub:create-notification>
 		<set-variable value="Cloudhub alert sent" doc:name="Logging Payload" doc:id="a7d0e333-81b0-4716-a62f-d70e114fd0ea" variableName="loggingPayload"/>
 		<flow-ref doc:name="Log Payload" doc:id="668998a2-eaae-4a5c-a999-5dc6dd00dfe5" name="logging-sub-flow"/>
     </sub-flow>
