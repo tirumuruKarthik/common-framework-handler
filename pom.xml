@@ -33,10 +33,6 @@
 				<configuration>
                  <classifier>mule-plugin</classifier>
                 <sharedLibraries>
-                        <sharedLibrary>
-                            <groupId>mysql</groupId>
-                            <artifactId>mysql-connector-java</artifactId>
-                        </sharedLibrary>
                     <sharedLibrary>
                             <groupId>com.microsoft.sqlserver</groupId>
                             <artifactId>mssql-jdbc</artifactId>

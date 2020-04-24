@@ -1,4 +1,4 @@
-package com.fatface.mule.exceptions;
+package com.aveva.mule.exceptions;
 
 public class InvalidPayloadException extends Exception{
 

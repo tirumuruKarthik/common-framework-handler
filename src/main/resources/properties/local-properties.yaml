@@ -1,32 +1,26 @@
 #----Common Block---No change Needed----      
 cloudhub:
-  username: "![V1H6cIZG27BimoyWHnUmWwgd7Z72XsoF+lx6EKe7Hfc=]"
-  password: "![pU6khIodBBpK1c7QxH7VmdEtcJxtRvmoKBlI+hYGFqk=]"
+  username: "![VKF6ZU1qUgyu1g1hIIEbKg==]"
+  password: "![NHwpguDpu3orWYyyXHS8Uw==]"
   
 smtp:
-  host: "mail.fatface.net"
-  port: "465"
-  user: "![XImJcfQv4D6cYan0i6XwPZi8Uxv0OkDQvTITnsw/onM=]"
-  password: "![r9f7FSUCH+2adxR8OeswFg==]"
-  subject: "Fatface API Exception"
+  host: ""
+  port: ""
+  user: ""
+  password: ""
+  subject: ""
 #----Common Block---No change Needed----
     
 db:
  audit: 
   config:
-   host: "mule-sandbox.cm1i2vsjtzdf.eu-west-1.rds.amazonaws.com"
+   host: "mastek-db-service.database.windows.net"
    port: "1433"
-   user: "![AyD0mBi0zwPqptV8KbEJGkjzeMuTdVHL2AEWiq0N3sQ=]"
-   password: "![PX91DJD02zpJ0MJ3jLRKUw==]"
-   database: "FATFACE_DB" 
-
-sftp:
-  host: "ftp.fatface.com"
-  port: "22"
-  username: "![W49cMbSedB3HHfPcr0pWWyYHk27r5mLh++/a62Nglxg=]"
-  password: "![YoKYhq6QWsR9eW3AVcCh2TRSSvrwrp94baroSAHlBlg=]" 
+   user: "![zyhAtvykYzLluT/msxeadEffkC2eJ4BLJ4vTlWLugFw=]"
+   password: "![6WuGjnUC9I3aTskMvhD/Lg==]"
+   database: "MASTEK-DB" 
   
 sqs:
-  accessKey: "![iKDP0/LYfR1ghGUCOAayKYI5kMT/ieTr3IMibNfn9y8=]"
-  secretKey: "![z8W9r4EBG78ATEDLlzRgrDu8pSr3cf8u0RPGoG/mEyLZSeyc1prL/JqYzbF2CWUY]"
-  region: "![6lleIG6Qoif/fTA7pK+sUA==]"
+  accessKey: ""
+  secretKey: ""
+  region: ""
