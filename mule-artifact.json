@@ -22,8 +22,8 @@
     "id": "mule",
     "attributes": {
     	"exportedPackages":[
-    		"com.fatface.mule.utils",
-    		"com.fatface.mule.exceptions"
+    		"com.aveva.mule.utils",
+    		"com.aveva.mule.exceptions"
     		]
     	}
     }

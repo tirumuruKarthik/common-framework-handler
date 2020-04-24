@@ -94,7 +94,7 @@ VALUES (:requestId , :finalMessageId, :corrlationId ,'PROCESS ENTRY' , :thread ,
 				<async doc:name="Async" doc:id="a3e38c48-4a16-4cc0-b250-e7ea1288b7fd">
 			<db:insert doc:name="Insert For Process Exit" doc:id="bafbec8f-e4d4-4da3-8c92-6ecce0fc96ee" config-ref="Database_Config">
 						<db:sql >INSERT INTO [dbo].[t_audit] ([request_id] ,[message_id] ,[correlation_id] ,[log_type] ,[instance_thread] ,[log_message] ,[record_create_time] ,[message_receive_time] ,[flow_status],[pri_biz_key],[sec_biz_key])
-VALUES (:requestId , :finalMessageId, :corrlationId ,'PROCESS EXIT' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,5, :primaryKey, :secondaryKey);</db:sql>
+VALUES (:requestId , :finalMessageId, :corrlationId ,'PROCESS EXIT' , :thread , :logMessage ,GETDATE() , :transactionStartTime ,3, :primaryKey, :secondaryKey);</db:sql>
 						<db:input-parameters ><![CDATA[#[{
 	requestId:vars.requestId,
 	finalMessageId:vars.finalMessageId,

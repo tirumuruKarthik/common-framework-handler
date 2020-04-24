@@ -1,4 +1,4 @@
-package com.fatface.mule.utils;
+package com.aveva.mule.utils;
 
 
 import java.net.URLEncoder;
