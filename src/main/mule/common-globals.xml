@@ -20,6 +20,12 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="b8195697-f573-4c1d-9ebb-faaf0ba86e541" >
 		<db:mssql-connection host="${db.audit.config.host}" user="${secure::db.audit.config.user}" password="${secure::db.audit.config.password}" databaseName="${db.audit.config.database}" >
 			<db:pooling-profile maxPoolSize="${db.pool.size.max}" minPoolSize="${db.pool.size.min}" />
+			<db:connection-properties >
+				<db:connection-property key="encrypt" value="true" />
+				<db:connection-property key="trustServerCertificate" value="false" />
+				<db:connection-property key="hostNameInCertificate" value="*.database.windows.net" />
+				<db:connection-property key="loginTimeout" value="30" />
+			</db:connection-properties>
 		</db:mssql-connection>
 	</db:config>	
 	<cloudhub:config name="CloudHub_Config" doc:name="CloudHub Config" doc:id="611f09fe-93a3-4f69-ab0a-5693466aeb9a1" >
