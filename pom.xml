@@ -31,7 +31,7 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-                 <classifier>mule-plugin</classifier>
+                 <classifier>mule-application</classifier>
                 <sharedLibraries>
                         <sharedLibrary>
                             <groupId>mysql</groupId>
